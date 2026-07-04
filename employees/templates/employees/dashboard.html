@@ -1,0 +1,147 @@
+{% extends 'employees/base.html' %}
+{% load static %}
+
+{% block title %}Dashboard - TalentSync{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col">
+        <h2 class="fw-bold text-dark mb-1">Dashboard</h2>
+        <p class="text-muted">Welcome back, <strong>{{ user.username }}</strong>. Here's a summary of your organization.</p>
+    </div>
+</div>
+
+<!-- Metrics Cards Section -->
+<div class="row g-4 mb-5">
+    <!-- Total Employees Metric Card -->
+    <div class="col-md-6 col-lg-4">
+        <div class="card stat-card p-4">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <h6 class="text-uppercase text-muted fw-semibold mb-1 small">Total Employees</h6>
+                    <h2 class="fw-bold text-dark mb-0">{{ total_employees }}</h2>
+                </div>
+                <div class="stat-icon stat-icon-primary">
+                    <i class="fa-solid fa-users"></i>
+                </div>
+            </div>
+            <div class="mt-3">
+                <a href="{% url 'employee_list' %}" class="small text-decoration-none fw-medium text-primary">
+                    View active registry <i class="fa-solid fa-arrow-right-long ms-1"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Total Departments Metric Card -->
+    <div class="col-md-6 col-lg-4">
+        <div class="card stat-card p-4">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <h6 class="text-uppercase text-muted fw-semibold mb-1 small">Departments</h6>
+                    <h2 class="fw-bold text-dark mb-0">{{ total_departments }}</h2>
+                </div>
+                <div class="stat-icon stat-icon-success">
+                    <i class="fa-solid fa-sitemap"></i>
+                </div>
+            </div>
+            <div class="mt-3">
+                <a href="{% url 'employee_list' %}" class="small text-decoration-none fw-medium text-success">
+                    Filter by departments <i class="fa-solid fa-arrow-right-long ms-1"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions Card -->
+    <div class="col-md-12 col-lg-4">
+        <div class="card stat-card p-4">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <h6 class="text-uppercase text-muted fw-semibold mb-1 small">Quick Actions</h6>
+                    <h2 class="fw-bold text-dark mb-0">Management</h2>
+                </div>
+                <div class="stat-icon stat-icon-info">
+                    <i class="fa-solid fa-bolt"></i>
+                </div>
+            </div>
+            <div class="mt-3 d-flex gap-2">
+                <a href="{% url 'employee_add' %}" class="btn btn-primary-custom btn-sm py-1.5 rounded-3 flex-grow-1 text-center">
+                    <i class="fa-solid fa-plus me-1"></i> Add Employee
+                </a>
+                <a href="/admin/" target="_blank" class="btn btn-secondary-custom btn-sm py-1.5 rounded-3 flex-grow-1 text-center">
+                    <i class="fa-solid fa-gears me-1"></i> Admin Panel
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Employees Section -->
+<div class="row">
+    <div class="col-lg-12">
+        <div class="card table-card">
+            <div class="card-header bg-white border-0 py-4 px-4 d-flex align-items-center justify-content-between">
+                <h5 class="fw-bold text-dark mb-0">Recently Added Employees</h5>
+                <a href="{% url 'employee_list' %}" class="btn btn-outline-secondary btn-sm rounded-pill px-3">
+                    View All
+                </a>
+            </div>
+            <div class="table-responsive">
+                <table class="table align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th>Employee ID</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Department</th>
+                            <th>Designation</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for emp in recent_employees %}
+                            <tr>
+                                <td class="fw-semibold text-primary">{{ emp.employee_id }}</td>
+                                <td>
+                                    <div class="fw-semibold">{{ emp.name }}</div>
+                                </td>
+                                <td>{{ emp.email }}</td>
+                                <td>
+                                    <span class="badge bg-light text-dark border px-2.5 py-1.5 rounded-3">
+                                        {{ emp.get_department_display }}
+                                    </span>
+                                </td>
+                                <td>{{ emp.designation }}</td>
+                                <td>
+                                    <span class="badge {% if emp.status == 'Active' %}badge-active{% else %}badge-inactive{% endif %}">
+                                        {{ emp.status }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="d-flex gap-2">
+                                        <a href="{% url 'employee_detail' emp.pk %}" class="btn btn-light btn-sm text-primary rounded-3" title="View details">
+                                            <i class="fa-regular fa-eye"></i>
+                                        </a>
+                                        <a href="{% url 'employee_edit' emp.pk %}" class="btn btn-light btn-sm text-secondary rounded-3" title="Edit">
+                                            <i class="fa-regular fa-pen-to-square"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="7" class="text-center py-5 text-muted">
+                                    <i class="fa-solid fa-users-slash fs-2 mb-3 d-block text-secondary"></i>
+                                    No employees found. Click <a href="{% url 'employee_add' %}">here</a> to add the first employee.
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

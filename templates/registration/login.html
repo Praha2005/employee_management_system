@@ -1,0 +1,65 @@
+{% extends 'employees/base.html' %}
+{% load static %}
+
+{% block title %}Login - TalentSync{% endblock %}
+
+{% block content %}
+<div class="row align-items-center justify-content-center min-vh-100" style="margin-top: -60px;">
+    <div class="col-md-5 col-lg-4">
+        <div class="text-center mb-4">
+            <h2 class="fw-bold text-primary mb-1 d-flex align-items-center justify-content-center">
+                <i class="fa-solid fa-people-roof me-2 fs-3"></i> TalentSync
+            </h2>
+            <p class="text-muted small">Employee Management Portal</p>
+        </div>
+        
+        <div class="card login-card p-4">
+            <h4 class="fw-bold text-center text-dark mb-4">Sign In</h4>
+            
+            {% if form.errors %}
+                <div class="alert alert-danger alert-dismissible-custom d-flex align-items-center py-2 mb-3" role="alert">
+                    <i class="fa-solid fa-circle-xmark me-2 text-danger"></i>
+                    <div class="small">Invalid username or password. Please try again.</div>
+                </div>
+            {% endif %}
+            
+            <form method="POST" action="{% url 'login' %}">
+                {% csrf_token %}
+                
+                <div class="mb-3">
+                    <label for="id_username" class="form-label small fw-semibold text-secondary">Username</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-end-0 text-muted">
+                            <i class="fa-regular fa-user"></i>
+                        </span>
+                        <input type="text" name="username" autofocus maxlength="150" class="form-control border-start-0" required id="id_username" placeholder="Enter username">
+                    </div>
+                </div>
+                
+                <div class="mb-4">
+                    <label for="id_password" class="form-label small fw-semibold text-secondary">Password</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-end-0 text-muted">
+                            <i class="fa-solid fa-lock"></i>
+                        </span>
+                        <input type="password" name="password" class="form-control border-start-0" required id="id_password" placeholder="Enter password">
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn btn-primary-custom w-100 py-2.5 rounded-3 mb-2">
+                    <i class="fa-solid fa-right-to-bracket me-2"></i> Log In
+                </button>
+            </form>
+            
+            <div class="text-center mt-3">
+                <p class="text-muted small mb-0">
+                    <i class="fa-solid fa-circle-info text-info me-1"></i> Admin user creation only.
+                </p>
+                <a href="/admin/" class="small text-decoration-none fw-medium text-primary mt-1 d-inline-block">
+                    Go to Django Admin
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

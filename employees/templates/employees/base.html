@@ -1,0 +1,129 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Employee Management System{% endblock %}</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
+    <!-- Custom Style Sheet -->
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+    <!-- Professional Glassmorphic Navbar -->
+    {% if user.is_authenticated %}
+    <nav class="navbar navbar-expand-lg navbar-custom sticky-top py-3 mb-4">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="{% url 'dashboard' %}">
+                <i class="fa-solid fa-people-roof me-2 fs-4"></i>
+                <span>TalentSync</span>
+            </a>
+            <button class="navbar-expand navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}" href="{% url 'dashboard' %}">
+                            <i class="fa-solid fa-chart-pie me-1"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'employee_list' and not request.GET.search %}active{% endif %}" href="{% url 'employee_list' %}">
+                            <i class="fa-solid fa-users me-1"></i> Employees
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'employee_add' %}active{% endif %}" href="{% url 'employee_add' %}">
+                            <i class="fa-solid fa-user-plus me-1"></i> Add Employee
+                        </a>
+                    </li>
+                </ul>
+                
+                <!-- Quick Inline Search -->
+                <form class="d-flex me-3" method="GET" action="{% url 'employee_list' %}">
+                    <div class="input-group">
+                        <input class="form-control form-control-sm border-end-0" type="search" placeholder="Search employee..." name="search" value="{{ query|default:'' }}" aria-label="Search">
+                        <button class="btn btn-outline-secondary btn-sm border-start-0 bg-white text-muted" type="submit">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </button>
+                    </div>
+                </form>
+
+                <!-- User Profile & Logout -->
+                <div class="d-flex align-items-center">
+                    <span class="text-muted me-3">
+                        <i class="fa-solid fa-circle-user me-1 text-primary"></i>
+                        <strong>{{ user.username }}</strong>
+                    </span>
+                    <a href="{% url 'logout' %}" class="btn btn-outline-danger btn-sm rounded-pill px-3">
+                        <i class="fa-solid fa-right-from-bracket me-1"></i> Logout
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+    {% endif %}
+
+    <!-- Main Content Container -->
+    <div class="container pb-5">
+        <!-- Messages System -->
+        {% if messages %}
+            <div class="row">
+                <div class="col-md-8 mx-auto">
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show alert-dismissible-custom d-flex align-items-center mb-4" role="alert">
+                            {% if message.tags == 'success' %}
+                                <i class="fa-solid fa-circle-check me-2 fs-5"></i>
+                            {% elif message.tags == 'danger' %}
+                                <i class="fa-solid fa-circle-xmark me-2 fs-5"></i>
+                            {% else %}
+                                <i class="fa-solid fa-circle-info me-2 fs-5"></i>
+                            {% endif %}
+                            <div>{{ message }}</div>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+
+        {% block content %}{% endblock %}
+    </div>
+
+    <!-- Global Delete Confirmation Modal -->
+    <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 rounded-4 shadow">
+                <div class="modal-header border-0 bg-danger text-white py-3 rounded-top-4">
+                    <h5 class="modal-title" id="deleteConfirmModalLabel">
+                        <i class="fa-solid fa-triangle-exclamation me-2"></i> Confirm Deletion
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body py-4">
+                    <p class="mb-0">Are you sure you want to permanently delete employee <strong id="employeeNameSpan" class="text-danger"></strong>? This action cannot be undone.</p>
+                </div>
+                <div class="modal-footer border-0 bg-light py-3 rounded-bottom-4">
+                    <button type="button" class="btn btn-secondary-custom" data-bs-dismiss="modal">Cancel</button>
+                    <form id="deleteConfirmForm" method="POST" action="">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger px-4 rounded-3">Delete</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS File -->
+    <script src="{% static 'js/main.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
